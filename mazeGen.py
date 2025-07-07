@@ -1,25 +1,36 @@
 # Example file showing a circle moving on screen
 import pygame
 import time
+from debug import debug
 
 # pygame setup
 pygame.init()
-screen = pygame.display.set_mode((502, 502))
+screen = pygame.display.set_mode((1500, 1000))
 clock = pygame.time.Clock()
 running = True
 dt = 0
 
 #maze
-cubeWallData = [1,1,1,1]
-mazzeList = [[cubeWallData for _ in range(10)] for _ in range(10)] #init a 10x10 maze matrix 
+cubeWallData = [1,1,1,1] # LEFT, BOTTOM , RIGTH, TOP
+mazzeList = [[list(cubeWallData) for _ in range(10)] for _ in range(10)] #init a 10x10 maze matrix 
+
+
+def printer(arrayThreeD):
+    result = ""
+    for i in range(10):
+        for j in range(10):
+            result += str(arrayThreeD[i][j]) + " "
+        result += "\n"
+    return result
+
+
 
 # Animation state
 current_x = 0
 current_y = 0
 draw_delay = 0.1  # seconds between cubes
 last_draw_time = time.time()
-
-player_pos = pygame.Vector2(screen.get_width() / 20, screen.get_height() / 20)
+player_pos = pygame.Vector2(502 / 20, 502 / 20)
 
 #line(surface, color, start_pos, end_pos, width=1) -> Syntax
 # start_pos (tuple(int or float, int or float) or list(int or float, int or float) or Vector2(int or float, int or float)) -- start position of the line, (x, y)
@@ -31,13 +42,13 @@ def drawCustomCube(stepValX, stepValY):
     offSetValY = 50 * stepValY
     sizeCube = 50 
     width = 2
-    if mazzeList[stepValX][stepValY] == [1,1,1,1]: 
+    if mazzeList[stepValY][stepValX][0] == 1: 
         pygame.draw.line(screen, "black", (offSetValX, offSetValY), (offSetValX, sizeCube + offSetValY), width=width) # left
-    if mazzeList[stepValX][stepValY] == [1,1,1,1]:
+    if mazzeList[stepValY][stepValX][1] == 1:
         pygame.draw.line(screen, "black", (offSetValX, sizeCube + offSetValY), (sizeCube + offSetValX, sizeCube + offSetValY), width=width) # bottom
-    if mazzeList[stepValX][stepValY] == [1,1,1,1]:
+    if mazzeList[stepValY][stepValX][2] == 1:
         pygame.draw.line(screen, "black", (sizeCube + offSetValX, sizeCube + offSetValY), (sizeCube + offSetValX, offSetValY), width=width) # right
-    if mazzeList[stepValX][stepValY] == [1,1,1,1]:
+    if mazzeList[stepValY][stepValX][3] == 1:
         pygame.draw.line(screen, "black", (sizeCube + offSetValX, offSetValY), (offSetValX, offSetValY), width=width) # top
 
 def removeLines(stepValX, stepValY):
@@ -48,23 +59,11 @@ def removeLines(stepValX, stepValY):
     colorRemove = "white"
     if mazzeList[stepValX][stepValY][0] == 0: 
         pygame.draw.line(screen, colorRemove, (offSetValX, offSetValY), (offSetValX, sizeCube + offSetValY), width=width) # left
-        # pygame.draw.line(screen, "black", (offSetValX, sizeCube + offSetValY), (sizeCube + offSetValX, sizeCube + offSetValY), width=width) # bottom
-        # pygame.draw.line(screen, "black", (sizeCube + offSetValX, sizeCube + offSetValY), (sizeCube + offSetValX, offSetValY), width=width) # right
-        # pygame.draw.line(screen, "black", (sizeCube + offSetValX, offSetValY), (offSetValX, offSetValY), width=width) # top
     if mazzeList[stepValX][stepValY][1] == 0:
-        # pygame.draw.line(screen, "black", (offSetValX, offSetValY), (offSetValX, sizeCube + offSetValY), width=width) # left
         pygame.draw.line(screen, colorRemove, (offSetValX, sizeCube + offSetValY), (sizeCube + offSetValX, sizeCube + offSetValY), width=width) # bottom
-        # pygame.draw.line(screen, "black", (sizeCube + offSetValX, sizeCube + offSetValY), (sizeCube + offSetValX, offSetValY), width=width) # right
-        # pygame.draw.line(screen, "black", (sizeCube + offSetValX, offSetValY), (offSetValX, offSetValY), width=width) # top
     if mazzeList[stepValX][stepValY][2] == 0:
-        # pygame.draw.line(screen, "black", (offSetValX, offSetValY), (offSetValX, sizeCube + offSetValY), width=width) # left
-        # pygame.draw.line(screen, "black", (offSetValX, sizeCube + offSetValY), (sizeCube + offSetValX, sizeCube + offSetValY), width=width) # bottoms
         pygame.draw.line(screen, colorRemove, (sizeCube + offSetValX, sizeCube + offSetValY), (sizeCube + offSetValX, offSetValY), width=width) # right
-        # pygame.draw.line(screen, "black", (sizeCube + offSetValX, offSetValY), (offSetValX, offSetValY), width=width) # top
     if mazzeList[stepValX][stepValY][3] == 0:
-        # pygame.draw.line(screen, "black", (offSetValX, offSetValY), (offSetValX, sizeCube + offSetValY), width=width) # left
-        # pygame.draw.line(screen, "black", (offSetValX, sizeCube + offSetValY), (sizeCube + offSetValX, sizeCube + offSetValY), width=width) # bottoms
-        # pygame.draw.line(screen, "black", (sizeCube + offSetValX, sizeCube + offSetValY), (sizeCube + offSetValX, offSetValY), width=width) # right
         pygame.draw.line(screen, colorRemove, (sizeCube + offSetValX, offSetValY), (offSetValX, offSetValY), width=width) # top
 
 while running:
@@ -100,7 +99,10 @@ while running:
             #if (x < current_x) or (x == current_x and y < current_y):
                 if(mazzeList[y][x] == [1,1,1,1]):
                     drawCustomCube(x, y)
-                removeLines(x,y)
+                #removeLines(x,y)
+
+    debug(printer(mazzeList), 10, 600)
+
 
    # Draw the next cube after a delay
     # if current_x < 10:
@@ -115,7 +117,7 @@ while running:
 
     pygame.draw.circle(screen, "red", player_pos, 10)        
     #key strokes
-    #keys = pygame.key.get_pressed()
+
 
     # flip() the display to put your work on screen
     pygame.display.flip()
