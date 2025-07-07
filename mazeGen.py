@@ -19,7 +19,7 @@ def printer(arrayThreeD):
     result = ""
     for i in range(10):
         for j in range(10):
-            result += str(arrayThreeD[i][j]) + " "
+            result += str(arrayThreeD[j][i]) + " "
         result += "\n"
     return result
 
@@ -42,13 +42,13 @@ def drawCustomCube(stepValX, stepValY):
     offSetValY = 50 * stepValY
     sizeCube = 50 
     width = 2
-    if mazzeList[stepValY][stepValX][0] == 1: 
-        pygame.draw.line(screen, "black", (offSetValX, offSetValY), (offSetValX, sizeCube + offSetValY), width=width) # left
-    if mazzeList[stepValY][stepValX][1] == 1:
-        pygame.draw.line(screen, "black", (offSetValX, sizeCube + offSetValY), (sizeCube + offSetValX, sizeCube + offSetValY), width=width) # bottom
-    if mazzeList[stepValY][stepValX][2] == 1:
-        pygame.draw.line(screen, "black", (sizeCube + offSetValX, sizeCube + offSetValY), (sizeCube + offSetValX, offSetValY), width=width) # right
-    if mazzeList[stepValY][stepValX][3] == 1:
+    if mazzeList[stepValX][stepValY][0] == 1: 
+        pygame.draw.line(screen, "red", (offSetValX, offSetValY), (offSetValX, sizeCube + offSetValY), width=width) # left
+    if mazzeList[stepValX][stepValY][1] == 1:
+        pygame.draw.line(screen, "green", (offSetValX, sizeCube + offSetValY), (sizeCube + offSetValX, sizeCube + offSetValY), width=width) # bottom
+    if mazzeList[stepValX][stepValY][2] == 1:
+        pygame.draw.line(screen, "blue", (sizeCube + offSetValX, sizeCube + offSetValY), (sizeCube + offSetValX, offSetValY), width=width) # right
+    if mazzeList[stepValX][stepValY][3] == 1:
         pygame.draw.line(screen, "black", (sizeCube + offSetValX, offSetValY), (offSetValX, offSetValY), width=width) # top
 
 def removeLines(stepValX, stepValY):
@@ -97,12 +97,14 @@ while running:
     for x in range(10):
         for y in range(10):
             #if (x < current_x) or (x == current_x and y < current_y):
-                if(mazzeList[y][x] == [1,1,1,1]):
-                    drawCustomCube(x, y)
+            drawCustomCube(x, y)
                 #removeLines(x,y)
 
     debug(printer(mazzeList), 10, 600)
-
+    player_posX_val = "Player X position = "+str(int(player_pos.x/50)+1)
+    player_posY_val = "Player Y position = "+str(int(player_pos.y/50)+1)
+    debug(player_posX_val, 10, 900)
+    debug(player_posY_val, 10, 920)
 
    # Draw the next cube after a delay
     # if current_x < 10:
