@@ -76,19 +76,23 @@ while running:
             if event.key == pygame.K_w and player_pos.y - 50 >= 0: 
                 player_pos.y -= 50
                 #cubeValues[3] = 0
-                mazzeList[int(player_pos.x/50)][int(player_pos.y/50)][3] -=1  #TOP instead of hard coding apply increments and decerements to array vals to dyanmically update cube wall data
+                mazzeList[int(player_pos.x/50)][int(player_pos.y/50)+1][3] -=1  #TOP instead of hard coding apply increments and decerements to array vals to dyanmically update cube wall data
+                mazzeList[int(player_pos.x/50)][int(player_pos.y/50)][1] -=1
             if event.key == pygame.K_s and player_pos.y + 50 < 500:
                 player_pos.y += 50
                 #cubeValues[1] = 0
-                mazzeList[int(player_pos.x/50)][int(player_pos.y/50)][1] -= 1  #BOTTOM
+                mazzeList[int(player_pos.x/50)][int(player_pos.y/50)-1][1] -= 1  #BOTTOM
+                mazzeList[int(player_pos.x/50)][int(player_pos.y/50)][3] -=1 
             if event.key == pygame.K_a and player_pos.x - 50 >= 0:
                 player_pos.x -= 50
                 #cubeValues[0] = 0
-                mazzeList[int(player_pos.x/50)][int(player_pos.y/50)][0] -= 1 #LEFT
+                mazzeList[int(player_pos.x/50)+1][int(player_pos.y/50)][0] -= 1 #LEFT
+                mazzeList[int(player_pos.x/50)][int(player_pos.y/50)][2] -= 1
             if event.key == pygame.K_d and player_pos.x + 50 < 500:
                 player_pos.x += 50
                 #cubeValues[2] = 0
-                mazzeList[int(player_pos.x/50)][int(player_pos.y/50)][2] -= 1 #RIGHT    
+                mazzeList[int(player_pos.x/50)-1][int(player_pos.y/50)][2] -= 1 #RIGHT    
+                mazzeList[int(player_pos.x/50)][int(player_pos.y/50)][0] -= 1
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("white")
