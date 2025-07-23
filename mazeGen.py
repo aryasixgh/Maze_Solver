@@ -2,6 +2,7 @@
 import pygame
 import time
 from debug import debug
+from randomDFS import traversalOutput
 
 # pygame setup
 pygame.init()
@@ -10,16 +11,26 @@ clock = pygame.time.Clock()
 running = True
 dt = 0
 
-#maze
-cubeWallData = [1,1,1,1] # LEFT, BOTTOM , RIGTH, TOP
-mazzeList = [[list(cubeWallData) for _ in range(10)] for _ in range(10)] #init a 10x10 maze matrix 
+mazzeList = []
+path = traversalOutput() # Result of RDFS
 
+#maze
+# cubeWallData = [1,1,1,1] # LEFT, BOTTOM , RIGTH, TOP
+# mazzeList = [[list(cubeWallData) for _ in range(10)] for _ in range(10)] #init a 10x10 maze matrix 
+n = 1
+for i in range(10):
+    row_data = []
+    for j in range(10):
+        cubeWallData=[1,1,1,1,n]
+        row_data.append(list(cubeWallData))
+        n+=1
+    mazzeList.append(row_data)
 
 def printer(arrayThreeD):
     result = ""
     for i in range(10):
         for j in range(10):
-            result += str(arrayThreeD[j][i]) + " "
+            result += str(arrayThreeD[i][j]) + " "
         result += "\n"
     return result
 
@@ -67,8 +78,11 @@ def removeLines(stepValX, stepValY):
         pygame.draw.line(screen, colorRemove, (sizeCube + offSetValX, offSetValY), (offSetValX, offSetValY), width=width) # top
 
 while running:
+    
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
+    player_pos_X = int(player_pos.x/50)-1
+    player_pos_Y = int(player_pos.y/50)-1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -93,6 +107,29 @@ while running:
                 #cubeValues[2] = 0
                 mazzeList[int(player_pos.x/50)-1][int(player_pos.y/50)][2] -= 1 #RIGHT    
                 mazzeList[int(player_pos.x/50)][int(player_pos.y/50)][0] -= 1
+            if event.key == pygame.K_f:
+                
+                for i in path:
+                    player_pos_singular = ((int(((player_pos.y/50)+1)-1) * 10)) + int((player_pos.x/50)+1)
+                    grid_index = mazzeList[int(player_pos.x/50)-1][int(player_pos.y/50)][4]
+                    if  grid_index-i == 10: # TOP
+                        player_pos.y -= 50
+                        mazzeList[int(player_pos.x/50)][int(player_pos.y/50)+1][3] -=1 
+                        mazzeList[int(player_pos.x/50)][int(player_pos.y/50)][1] -=1  
+                    if grid_index-i == 1: # LEFT
+                        player_pos.x -= 50
+                        mazzeList[int(player_pos.x/50)+1][int(player_pos.y/50)][0] -= 1 
+                        mazzeList[int(player_pos.x/50)][int(player_pos.y/50)][2] -= 1
+                    if grid_index - i == -1: # RIGHT
+                        player_pos.x += 50
+                        mazzeList[int(player_pos.x/50)-1][int(player_pos.y/50)][2] -= 1     
+                        mazzeList[int(player_pos.x/50)][int(player_pos.y/50)][0] -= 1
+                    if grid_index - i == -10: # BOTTOM
+                        player_pos.y += 50
+                        mazzeList[int(player_pos.x/50)][int(player_pos.y/50)-1][1] -= 1  
+                        mazzeList[int(player_pos.x/50)][int(player_pos.y/50)][3] -=1         
+
+
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("white")
@@ -107,8 +144,12 @@ while running:
     debug(printer(mazzeList), 10, 600)
     player_posX_val = "Player X position = "+str(int(player_pos.x/50)+1)
     player_posY_val = "Player Y position = "+str(int(player_pos.y/50)+1)
+    player_pos_singular = "Player pos individual = "+ str(((int(((player_pos.y/50)+1)-1) * 10)) + int((player_pos.x/50)+1))
     debug(player_posX_val, 10, 900)
     debug(player_posY_val, 10, 920)
+    debug(player_pos_singular, 10, 940)
+    debug(path, 10, 960)
+    
 
    # Draw the next cube after a delay
     # if current_x < 10:
